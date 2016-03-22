@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Weather Forecast</title>
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+</head>
+
+<body>
+    <h1>Weather Forecast</h1>
+        <div id="whole">
+           
+           <div id="search">
+               <input type="url" id="city" value="">
+               <button id="get">Search</button>
+            </div>
+        <br>
+        <br>
+            <div id="data">
+                <div id="nam"></div>
+                <br>
+                <div id="temp">
+                    <img id="ima"> <span id="out"></span>
+                </div>
+                <div id="ou"></div>
+                <br>
+                <div id="out1"></div>
+                <br>
+                <div id="out2"></div>
+                <br>
+                <div id="out3"></div>
+            </div>
+        </div>
+
+	
+        <div id="dashboard">
+
+                <div class="in">  <p id="o" ></p>  </div>
+                <div class="in"> <canvas id="can" height="50"></canvas> </div>
+                <div class="in">   <p id="o1"></p>  </div>
+        </div>
+
+
+  <script>
+
+	  //function to fetch 5days weather data by sending XMLHttpRequest
+      function weekWeather(options) {
+          var x = new XMLHttpRequest();
+          x.open(options.method, options.url);
+          x.onload = x.onerror = function() {parseWeekXML(x.responseText)};
+          x.send(options.data);
+      }
+  
+      // parsing data for weekly 5 day/3 hour forecast
+      function parseWeekXML(xml){
+          
+          var k=0;
+          var len = 38;
+
+            $(xml).find("time").each(function(){
+                var d = new Date($(this).attr("from"));
+                var days = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+                $("#o").append("&nbsp;"+ "&nbsp;"+d.getDate() + " "+ days[d.getDay()]+ " " + addZero(d.getHours())+ ":" + addZero(d.getMinutes())+ "&nbsp;"+ "&nbsp;");
+            });
+        
+          var canvas = document.getElementById("can"),
+          context = canvas.getContext("2d");
+          canvas.width = 10*(11*38+4) + 500;
+        
+            $(xml).find("symbol").each(function(){
+                var iname = $(this).attr("var");
+                thisWidth = 50;
+		        thisHeight = 50;
+		        spacemargin = 10.5;
+
+		   (function(j){
+			   var imgSrc = "http://openweathermap.org/img/w/"+iname+".png";
+			   var letterImg = new Image();
+               letterImg.onload = function() {
+				context.drawImage(letterImg,spacemargin*(11*j+3), 0,thisWidth,thisHeight);
+			    }
+			   letterImg.src = imgSrc;
+		   })(k);
+            k++;
+		   });
+	
+           $(xml).find("temperature").each(function(){
+			$("#o1").append("&nbsp;"+ "&nbsp;"+"&nbsp;"+"&nbsp;"+ "&nbsp;"+"&nbsp;"+ "&nbsp;"+ $(this).attr("value") + "°" +"C"+"&nbsp;"+"&nbsp;"+"&nbsp;"+ "&nbsp;"+"&nbsp;"+ "&nbsp;"+"&nbsp;"+"&nbsp;");
+		   });
+	}
+
+    // function to add zero before hours and minutes if it is less than 10
+	function addZero(i) {
+    if (i < 10) {
+        i = "0" + i;
+    }
+    return i;
+	}
+
+    // function to fetch current weather data by sending XMLHttpRequest
+	function currentWeather(options) {
+		var x = new XMLHttpRequest();
+		x.open(options.method, options.url);
+		x.onload = x.onerror = function() {parseCurrentXML(x.responseText)};
+		x.send(options.data);
+	}
+
+     // parsing data for current weather for one location
+	function parseCurrentXML(xml){ 
+
+		$(xml).find("city").each(function(){
+			$("#nam").append($(this).attr("name") + "," + $(this).find("country").text());
+		});
+
+		$(xml).find("weather").each(function(){
+			var i = $(this).attr("icon");
+			document.getElementById("ima").src = "http://openweathermap.org/img/w/"+i+".png";
+			$("#ou").append($(this).attr("value"));
+		}); 
+
+		$(xml).find("temperature").each(function(){
+			$("#out").append($(this).attr("value") + "°" +"C");
+		});
+
+		$(xml).find("speed").each(function(){
+			$("#out1").append("Wind"+"&nbsp;"+": " + $(this).attr("name") + " " + $(this).attr("value") + "&nbsp;"+ "m/s");
+		});
+
+        $(xml).find("direction").each(function(){
+			$("#out1").append("       " + $(this).attr("name") + "(" + $(this).attr("value") +")");
+		});
+
+		$(xml).find("humidity").each(function(){
+			$("#out2").append("Humidity : " + $(this).attr("value") + $(this).attr("unit"));
+		});
+
+		$(xml).find("pressure").each(function(){
+			$("#out3").append("Pressure : " + $(this).attr("value") + " " + $(this).attr("unit"));
+		});
+	}
+
+	
+    // action on button, calling both api on clicking button
+	document.getElementById("get").onclick = function(e) {
+		
+		clearFields();
+		var city = document.getElementById("city");
+		var currentAPI = "http://api.openweathermap.org/data/2.5/weather?q=";
+		var weekAPI = "http://api.openweathermap.org/data/2.5/forecast?q=";
+		var str = "&mode=xml&appid=ae18eaf235b48872131ccc6605d257ce&units=metric";
+		var currentUrl = currentAPI+encodeURIComponent(city.value)+str;
+		var weekUrl = weekAPI+encodeURIComponent(city.value)+str;
+
+	  e.preventDefault();
+
+	  currentWeather({
+		method: 'GET',
+		url: currentUrl
+	  });
+
+	  weekWeather({
+		method: 'GET',
+		url: weekUrl
+	  });
+
+    };
+  
+   // function for clearing data from all fields.
+    function clearFields() {
+        document.getElementById("out").innerHTML="";
+        document.getElementById("out1").innerHTML="";
+        document.getElementById("out2").innerHTML="";
+        document.getElementById("out3").innerHTML="";
+        document.getElementById("o").innerHTML="";
+        document.getElementById("o1").innerHTML="";
+        document.getElementById("ou").innerHTML="";
+        document.getElementById("nam").innerHTML="";
+        }
+
+</script>
+
+</body>
+
+</html>
+
+
+

@@ -1,0 +1,112 @@
+html, body {
+  margin: 0;
+  height: 100%;
+  padding: 3px;
+  font-family: Arial, sans-serif;
+  font-size: 16px;
+  background-repeat: no-repeat;
+  background-position: centre centre;
+  background-image: url("cloud.jpg");
+  background-attachment: fixed; 
+  background-size: 100% 100%;
+}
+
+/* css for heading */
+h1
+{
+ text-align: center;
+ font-size: 250%;
+ color: brown;
+ text-decoration: underline;
+}
+
+/* css for week data */
+#dashboard {
+    position: fixed;
+    bottom: 0;
+    font-weight: bold;
+    padding-top: 5px;
+    padding-right: 10px;
+    padding-bottom: 0px;
+    padding-left: 10px;
+    white-space: nowrap;
+    width: 1250px;
+    background-color: cyan;
+    height: 155px;
+    display:inline;
+    overflow: scroll;
+    opacity: 0.6;
+    font-family: Arial, sans-serif;
+    filter: alpha(opacity=60);
+    display: table-cell;
+}
+
+/* css for textbox */
+#city
+{
+    min-width: 200px;
+	height:25px;
+    border-radius: 10px;
+    border: 2px solid cyan;
+    padding: 5px 10px;
+    font-family: Arial, sans-serif;
+    font-size: 20px;
+}
+
+/* css for button */
+#get
+{
+    width: 100px;
+	height: 40px;
+    border: 2px solid cyan;
+    border-radius: 25px;
+}
+
+/* css for city name and country */
+#nam
+{     
+   font-size: 35px;     
+}
+
+/* css for temperature */
+#out
+{     
+   font-size: 40px;
+}
+
+#whole
+{
+  display:inline;
+
+}
+
+/* css for week data */
+.in{
+	display:inline;
+	white-space: nowrap;
+}
+
+/* css for button and textbox */
+#search
+{
+  display:inline;
+  padding-top:3px;
+  padding-left:35%;	
+}
+
+/* css for current data */
+#data
+{
+      color: black;
+      font-family: Arial, sans-serif;
+      font-size: 20px;
+	  padding-left:35%;
+	  font-weight: bold;
+}
+
+/* css for current image and temperature */
+.temp
+{
+  display:inline;
+}
+
